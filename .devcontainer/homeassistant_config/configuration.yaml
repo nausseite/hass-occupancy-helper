@@ -1,0 +1,64 @@
+---
+default_config:
+
+homeassistant:
+  name: Home
+  latitude: 0
+  longitude: 0
+  elevation: 0
+  unit_system: metric
+  country: US
+  currency: USD
+  time_zone: "America/Los_Angeles"
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks:
+        - 0.0.0.0/0
+      trusted_users:
+        0.0.0.0/0: 1141ee80e0a647c1a4687d0b7631a019
+      allow_bypass_login: true
+    - type: homeassistant
+  packages:
+    specific: !include specific_configuration.yaml
+
+logger:
+  default: error
+  logs:
+    custom_components.frigate: debug
+    homeassistant.components.mqtt: error
+
+input_boolean:
+  pir1:
+    name: PIR 1
+  pir2:
+    name: PIR 2
+  door1:
+    name: Door 1
+  door2:
+    name: Door 2
+  occupancy_sensor:
+    name: Occupancy Sensor
+
+binary_sensor:
+  - platform: template
+    sensors:
+      pir1_active:
+        friendly_name: "PIR 1 Active"
+        device_class: motion
+        value_template: "{{ is_state('input_boolean.pir1', 'on') }}"
+      pir2_active:
+        friendly_name: "PIR 2 Active"
+        device_class: motion
+        value_template: "{{ is_state('input_boolean.pir2', 'on') }}"
+      door1_open:
+        friendly_name: "Door 1 Open"
+        device_class: door
+        value_template: "{{ is_state('input_boolean.door1', 'on') }}"
+      door2_open:
+        friendly_name: "Door 2 Open"
+        device_class: door
+        value_template: "{{ is_state('input_boolean.door2', 'on') }}"
+      occupancy_detected:
+        friendly_name: "Occupancy Detected"
+        device_class: occupancy
+        value_template: "{{ is_state('input_boolean.occupancy_sensor', 'on') }}"

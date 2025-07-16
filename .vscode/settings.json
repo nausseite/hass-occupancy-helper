@@ -1,0 +1,14 @@
+{
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "python.testing.pytestArgs": ["--no-cov", "-p", "no:sugar"],
+  "python.testing.pytestEnabled": true,
+  "[python]": {
+    "editor.defaultFormatter": "mikoz.black-py"
+  },
+  "cSpell.words": [
+    "hass",
+    "homeassistant",
+    "unsub"
+  ]
+}

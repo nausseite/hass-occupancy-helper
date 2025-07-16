@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Attach to Home Assistant",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": { "host": "homeassistant", "port": 5678 },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/custom_components/occupancy",
+          "remoteRoot": "/config/custom_components/occupancy"
+        }
+      ],
+      "justMyCode": true,
+      "preLaunchTask": "Home Assistant",
+      // Makes the debugger's restart button restart Home Assistant
+      "postDebugTask": "Restart Home Assistant"
+    }
+  ]
+}

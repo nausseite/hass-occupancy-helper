@@ -1,0 +1,50 @@
+{
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "devcontainer",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    }
+  },
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "initializeCommand": [".devcontainer/scripts/devcontainer_initialize.sh"],
+  "postCreateCommand": [".devcontainer/scripts/devcontainer_post_create.sh"],
+  "forwardPorts": ["homeassistant:8123"],
+  "portsAttributes": {
+    "homeassistant:8123": {
+      "label": "Home Assistant",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "mikoz.black-py",
+        "streetsidesoftware.code-spell-checker",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "keesschollaart.vscode-home-assistant",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": false,
+        "vscode-home-assistant.hostUrl": "http://homeassistant:8123",
+        "vscode-home-assistant.longLivedAccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2NGI5ZWYxMTlkNDU0NjhmODk3N2JlM2M3N2MwMjAyOSIsImlhdCI6MTc1MjY2NDY0MSwiZXhwIjoyMDY4MDI0NjQxfQ.di-jkwRJBxjl0fAzh0OQTtAEeKtwj9mRvVVnwJooepc",
+        "files.associations": {
+          "**/homeassistant_preconfig/.storage/*": "json",
+          "**/homeassistant_config/*configuration.yaml": "home-assistant"
+        },
+        "[home-assistant]": {
+          "editor.defaultFormatter": "keesschollaart.vscode-home-assistant"
+        },
+        "[json][jsonc][yaml]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      }
+    }
+  }
+}

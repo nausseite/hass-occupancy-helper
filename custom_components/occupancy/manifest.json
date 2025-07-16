@@ -1,0 +1,15 @@
+{
+    "domain": "occupancy",
+    "name": "Occupancy Helper",
+    "documentation": "https://github.com/nausseite/hass-occupancy-helper",
+    "issue_tracker": "https://github.com/nausseite/hass-occupancy-helper/issues",
+    "version": "0.0.1",
+    "config_flow": true,
+    "requirements": [],
+    "codeowners": [
+        "@nausseite"
+    ],
+    "dependencies": [],
+    "integration_type": "helper",
+    "iot_class": "calculated"
+}

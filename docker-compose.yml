@@ -1,0 +1,25 @@
+---
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    init: true
+    env_file:
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker-host.sock
+      - .:${LOCAL_WORKSPACE_FOLDER:-/workspace}:cached
+  homeassistant:
+    image: "homeassistant/home-assistant:${HA_VERSION:-latest}"
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - .devcontainer/scripts/homeassistant_preconfig.sh:/etc/cont-init.d/preconfig.sh:ro
+      - .devcontainer/homeassistant_preconfig:/preconfig.d/01-integration:ro
+      # Avoid mounting the entire config directory so that data is not persisted
+      # - .devcontainer/homeassistant_config/all:/config
+      - .devcontainer/homeassistant_config/configuration.yaml:/config/configuration.yaml:ro
+      - .devcontainer/homeassistant_config/specific_configuration.yaml:/config/specific_configuration.yaml:ro
+      - .devcontainer/homeassistant_config/www:/config/www # For Downloader
+      - ./custom_components:/config/custom_components:ro
