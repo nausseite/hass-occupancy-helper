@@ -1,9 +1,22 @@
 import asyncio
-from homeassistant.helpers.event import async_track_state_change
-from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
+from typing import Callable
 
-from .const import CONF_ADVERSARIAL_OCCUPANCIES, CONF_DOOR_SENSORS, CONF_MASTER_OCCUPANCY, CONF_MOTION_SENSORS, CONF_NAME, CONF_OCCUPANCY_SENSORS, CONF_TIMEOUT, DEFAULT_TIMEOUT, DOMAIN
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.event import async_track_state_change
+
+from .const import (
+    CONF_ADVERSARIAL_OCCUPANCIES,
+    CONF_DOOR_SENSORS,
+    CONF_MASTER_OCCUPANCY,
+    CONF_MOTION_SENSORS,
+    CONF_NAME,
+    CONF_OCCUPANCY_SENSORS,
+    CONF_TIMEOUT,
+    DEFAULT_TIMEOUT,
+    DOMAIN,
+)
+
 
 class OccupancyDevice:
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
@@ -12,7 +25,9 @@ class OccupancyDevice:
         self.motion_sensors = entry.options.get(CONF_MOTION_SENSORS, [])
         self.door_sensors = entry.options.get(CONF_DOOR_SENSORS, [])
         self.occupancy_sensors = entry.options.get(CONF_OCCUPANCY_SENSORS, [])
-        self.adversarial_occupancies = entry.options.get(CONF_ADVERSARIAL_OCCUPANCIES, [])
+        self.adversarial_occupancies = entry.options.get(
+            CONF_ADVERSARIAL_OCCUPANCIES, []
+        )
         self.master_occupancy = entry.options.get(CONF_MASTER_OCCUPANCY, None)
         self.timeout = entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
 
@@ -22,7 +37,7 @@ class OccupancyDevice:
             "name": self.device_name,
         }
 
-        self._state_change_listeners = []
+        self._state_change_listeners: list[Callable] = []
         self._is_occupied = False
         self.override = False
         self._off_handle = None
@@ -39,12 +54,14 @@ class OccupancyDevice:
         self.lockout = False
 
     _desired_state = None
+
     def _set_desired_state(self, state: bool, check_lockout: bool = True):
         if self.override or (check_lockout and self.lockout):
             return
         self._desired_state = state
 
-        if self.master_occupancy and self.hass.states.get(self.master_occupancy).state != "on":
+        master = self.hass.states.get(self.master_occupancy)
+        if master and master.state != "on":
             self.is_occupied = False
             return
 
@@ -53,7 +70,12 @@ class OccupancyDevice:
 
     def _adversarial_occupancy_detected(self):
         """Check if any adversarial occupancy sensors are triggered."""
-        return any(self.hass.states.get(sensor).state == "on" for sensor in self.adversarial_occupancies)
+        if not self.adversarial_occupancies or len(self.adversarial_occupancies) == 0:
+            return True  # No adversarial sensors configured, assume safe
+        return any(
+            self.hass.states.get(sensor).state == "on"
+            for sensor in self.adversarial_occupancies
+        )
 
     def _doors_closed(self):
         if not self.door_sensors or len(self.door_sensors) == 0:
@@ -119,6 +141,7 @@ class OccupancyDevice:
         if self._off_handle:
             self._off_handle.cancel()
             self._off_handle = None
+
     # endregion
 
     # region lockout timer
@@ -144,6 +167,7 @@ class OccupancyDevice:
         if self._lockout_handle:
             self._lockout_handle.cancel()
             self._lockout_handle = None
+
     # endregion
 
     @property
@@ -152,6 +176,7 @@ class OccupancyDevice:
 
     @is_occupied.setter
     def is_occupied(self, value):
+        self._desired_state = value
         self._is_occupied = value
         self._notify_state_change_listeners()
 
@@ -176,7 +201,9 @@ class OccupancyDevice:
             self.hass, self.occupancy_sensors, self._occupancy_sensor_callback
         )
         self._adversarial_occupancy_unsub = async_track_state_change(
-            self.hass, self.adversarial_occupancies, self._adversarial_occupancy_callback
+            self.hass,
+            self.adversarial_occupancies,
+            self._adversarial_occupancy_callback,
         )
         if self.master_occupancy:
             self._master_occupancy_unsub = async_track_state_change(
@@ -202,4 +229,5 @@ class OccupancyDevice:
         self._cancel_off_timer()
         self._cancel_lockout_timer()
         self._state_change_listeners.clear()
+
     # endregion

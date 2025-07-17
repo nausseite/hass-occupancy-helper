@@ -1,8 +1,7 @@
-import voluptuous as vol
-from typing import Any, cast
 from collections.abc import Mapping
 from typing import Any, cast
 
+import voluptuous as vol
 from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import (
     SchemaCommonFlowHandler,
@@ -10,16 +9,15 @@ from homeassistant.helpers.schema_config_entry_flow import (
     SchemaFlowFormStep,
 )
 
-
 from .const import (
     CONF_ADVERSARIAL_OCCUPANCIES,
-    CONF_MASTER_OCCUPANCY,
-    CONF_NAME,
-    DOMAIN,
-    CONF_MOTION_SENSORS,
     CONF_DOOR_SENSORS,
+    CONF_MASTER_OCCUPANCY,
+    CONF_MOTION_SENSORS,
+    CONF_NAME,
     CONF_OCCUPANCY_SENSORS,
     CONF_TIMEOUT,
+    DOMAIN,
 )
 
 
@@ -39,7 +37,7 @@ async def get_base_options_schema(handler: SchemaCommonFlowHandler) -> vol.Schem
             ),
             vol.Required(CONF_OCCUPANCY_SENSORS): selector.EntitySelector(
                 selector.EntitySelectorConfig(
-                    domain="binary_sensor",device_class="occupancy",multiple=True
+                    domain="binary_sensor", device_class="occupancy", multiple=True
                 )
             ),
             vol.Required(CONF_ADVERSARIAL_OCCUPANCIES): selector.EntitySelector(

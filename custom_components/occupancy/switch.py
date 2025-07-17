@@ -10,6 +10,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     device = hass.data[DOMAIN][entry.entry_id]["device"]
     async_add_entities([OverrideSwitch(entry, device), StateSwitch(entry, device)])
 
+
 class OverrideSwitch(RestoreEntity, SwitchEntity):
     def __init__(self, entry, device: OccupancyDevice):
         self.device = device
@@ -47,6 +48,7 @@ class OverrideSwitch(RestoreEntity, SwitchEntity):
         self.device.override = False
         self.async_schedule_update_ha_state()
 
+
 class StateSwitch(RestoreEntity, SwitchEntity):
     def __init__(self, entry, device: OccupancyDevice):
         self.device = device
@@ -60,7 +62,6 @@ class StateSwitch(RestoreEntity, SwitchEntity):
     @property
     def suggested_object_id(self):
         return f"occupancy_{slugify(self.device.device_name)}"
-
 
     @property
     def device_info(self):
@@ -89,4 +90,3 @@ class StateSwitch(RestoreEntity, SwitchEntity):
     def _on_device_state_change(self):
         """Callback for when the device state changes."""
         self.async_schedule_update_ha_state()
-
