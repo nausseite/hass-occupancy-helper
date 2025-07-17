@@ -24,7 +24,7 @@ homeassistant:
 logger:
   default: error
   logs:
-    custom_components.frigate: debug
+    custom_components.occupancy: debug
     homeassistant.components.mqtt: error
 
 input_boolean:

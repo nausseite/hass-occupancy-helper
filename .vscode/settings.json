@@ -10,5 +10,11 @@
     "hass",
     "homeassistant",
     "unsub"
+  ],
+  "cSpell.ignorePaths": [
+    "./.*",
+    "*.csv",
+    "*.json",
+    "docker-compose.yml"
   ]
 }

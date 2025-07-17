@@ -27,7 +27,8 @@
         "keesschollaart.vscode-home-assistant",
         "ms-azuretools.vscode-docker",
         "github.vscode-pull-request-github",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "ms-python.mypy-type-checker"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
