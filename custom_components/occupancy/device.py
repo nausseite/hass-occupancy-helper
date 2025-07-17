@@ -18,6 +18,14 @@ from .const import (
 )
 
 
+def binary_state(hass: HomeAssistant, entity_id: str) -> bool:
+    """Get the binary state of an entity."""
+    state = hass.states.get(entity_id)
+    if state is None:
+        return False
+    return state.state == "on"
+
+
 class OccupancyDevice:
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
         self.hass = hass
@@ -60,8 +68,7 @@ class OccupancyDevice:
             return
         self._desired_state = state
 
-        master = self.hass.states.get(self.master_occupancy)
-        if master and master.state != "on":
+        if self.master_occupancy and not binary_state(self.hass, self.master_occupancy):
             self.is_occupied = False
             return
 
@@ -73,16 +80,13 @@ class OccupancyDevice:
         if not self.adversarial_occupancies or len(self.adversarial_occupancies) == 0:
             return True  # No adversarial sensors configured, assume safe
         return any(
-            self.hass.states.get(sensor).state == "on"
-            for sensor in self.adversarial_occupancies
+            binary_state(self.hass, sensor) for sensor in self.adversarial_occupancies
         )
 
     def _doors_closed(self):
         if not self.door_sensors or len(self.door_sensors) == 0:
             return False
-        return all(
-            self.hass.states.get(sensor).state == "off" for sensor in self.door_sensors
-        )
+        return all(not binary_state(self.hass, sensor) for sensor in self.door_sensors)
 
     async def _motion_sensor_callback(self, entity_id, old_state, new_state):
         if new_state is None or new_state.state != "on":
